@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.api.v1.endpoints import routes
 from app.db.database import engine
+from fastapi.middleware.cors import CORSMiddleware
 from app.db.base import Base
 
 Base.metadata.create_all(bind=engine)
@@ -13,6 +14,13 @@ app.include_router(
     tags=["confessions"]
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['http://localhost:5173'],  
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"],  
+)
 @app.get("/")
 def root():
     return{"message":"Anonymous confession api"}
