@@ -1,11 +1,12 @@
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Text
+from sqlalchemy.sql import func
 from datetime import datetime
 import uuid
 
 from app.db.base import Base
 
 class Confession(Base):
-    __table__='confession'
+    __tablename__ = 'confession'
 
     id = Column(
         String,
@@ -14,15 +15,15 @@ class Confession(Base):
         index=True 
     ) 
     confession = Column(
-        String,
+        Text,
         nullable=False
    )
     created_at = Column(
-        DateTime,
-        default=datetime.utc.now,
+        DateTime(timezone=True), 
+        server_default=func.now(),
         nullable=False
    )
 
 
-   
+
    
