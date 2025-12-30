@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app import models, schemas
 
 class CommentService:
@@ -28,6 +29,13 @@ class CommentService:
         ).first()
         if not comment:
             raise ValueError(f"Comment with id {comment_id} not found")
+        
+        # Add vote counts to comment
+        vote_counts = CommentService._get_vote_counts(db, comment_id)
+        comment.upvotes = vote_counts["upvotes"]
+        comment.downvotes = vote_counts["downvotes"]
+        comment.score = vote_counts["score"]
+        
         return comment
     
     @staticmethod
@@ -39,8 +47,36 @@ class CommentService:
         if not confession:
             raise ValueError(f"Confession with id {confession_id} not found")
         
-        return db.query(models.Comment).filter(
+        comments = db.query(models.Comment).filter(
             models.Comment.confession_id == confession_id
         ).order_by(
             models.Comment.created_at.asc()
         ).offset(skip).limit(limit).all()
+        
+        # Add vote counts to each comment
+        for comment in comments:
+            vote_counts = CommentService._get_vote_counts(db, comment.id)
+            comment.upvotes = vote_counts["upvotes"]
+            comment.downvotes = vote_counts["downvotes"]
+            comment.score = vote_counts["score"]
+        
+        return comments
+    
+    @staticmethod
+    def _get_vote_counts(db: Session, comment_id: str):
+        """Helper method to get vote counts for a comment."""
+        upvotes = db.query(func.count(models.Vote.id)).filter(
+            models.Vote.comment_id == comment_id,
+            models.Vote.vote_value == 1
+        ).scalar() or 0
+        
+        downvotes = db.query(func.count(models.Vote.id)).filter(
+            models.Vote.comment_id == comment_id,
+            models.Vote.vote_value == -1
+        ).scalar() or 0
+        
+        return {
+            "upvotes": upvotes,
+            "downvotes": downvotes,
+            "score": upvotes - downvotes
+        }

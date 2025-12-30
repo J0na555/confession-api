@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from app.api.v1.endpoints import routes, comments
+from app.api.v1.endpoints import routes, comments, votes
 from app.db.database import engine
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.base import Base
-from app.models import Confession, Comment
+from app.models import Confession, Comment, Vote
 
 Base.metadata.create_all(bind=engine)
 
@@ -19,6 +19,12 @@ app.include_router(
     comments.router,
     prefix="/api/v1/comments",
     tags=["comments"]
+)
+
+app.include_router(
+    votes.router,
+    prefix="/api/v1",
+    tags=["votes"]
 )
 
 app.add_middleware(
