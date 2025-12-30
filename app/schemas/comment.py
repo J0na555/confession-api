@@ -17,6 +17,9 @@ class Comment(CommentBase):
     confession_id: str
     comment: str
     created_at: datetime
+    upvotes: int = 0
+    downvotes: int = 0
+    score: int = 0  # upvotes - downvotes
 
     class Config:
         orm_mode = True

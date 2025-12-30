@@ -32,3 +32,6 @@ class Comment(Base):
     
     # Relationship with confession
     confession = relationship("Confession", back_populates="comments")
+    
+    # Relationship with votes
+    votes = relationship("Vote", back_populates="comment", cascade="all, delete-orphan")
