@@ -3,6 +3,7 @@ from app.api.v1.endpoints import routes, comments
 from app.db.database import engine
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.base import Base
+from app.models import Confession, Comment
 
 Base.metadata.create_all(bind=engine)
 
