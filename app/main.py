@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.v1.endpoints import routes
+from app.api.v1.endpoints import routes, comments
 from app.db.database import engine
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.base import Base
@@ -12,6 +12,12 @@ app.include_router(
     routes.router,
     prefix="/api/v1/confessions",
     tags=["confessions"]
+)
+
+app.include_router(
+    comments.router,
+    prefix="/api/v1/comments",
+    tags=["comments"]
 )
 
 app.add_middleware(

@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, DateTime, Text
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from datetime import datetime
 import uuid
 
@@ -23,6 +24,9 @@ class Confession(Base):
         server_default=func.now(),
         nullable=False
    )
+    
+    # Relationship with comments
+    comments = relationship("Comment", back_populates="confession", cascade="all, delete-orphan")
 
 
 
